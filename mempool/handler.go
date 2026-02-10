@@ -4,12 +4,17 @@ import (
 	"log"
 
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/flashbots-lab/searcher/bundle"
 )
 
-type Handler struct{}
+type Handler struct{
+	bundler *bundle.Bundler
+}
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(bundler *bundle.Bundler) *Handler {
+	return &Handler{
+		bundler: bundler,
+	}
 }
 
 func (h *Handler) Handle(tx *types.Transaction) {
@@ -25,4 +30,6 @@ func (h *Handler) Handle(tx *types.Transaction) {
 		tx.Gas(),
 		len(tx.Data()),
 	)
+
+	h.bundler.Add(tx)
 }

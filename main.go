@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/flashbots-lab/searcher/bundle"
 	"github.com/flashbots-lab/searcher/mempool"
 )
 
@@ -21,7 +22,15 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	sub := mempool.NewSubscriber(wsURL)
+	bundler := bundle.NewBundler()
+	handler := mempool.NewHandler(bundler)
+	sub := mempool.NewSubscriber(wsURL, handler)
+
+	go func() {
+		for b := range bundler.Start() {
+			bundle.LogBundle(b)
+		}
+	}()
 	
 	errCh := make(chan error, 1)
 	go func() {

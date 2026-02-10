@@ -15,10 +15,10 @@ type Subscriber struct {
 	handler *Handler
 }
 
-func NewSubscriber(wsURL string) *Subscriber {
+func NewSubscriber(wsURL string, handler *Handler) *Subscriber {
 	return &Subscriber{
 		wsURL:   wsURL,
-		handler: NewHandler(),
+		handler: handler,
 	}
 }
 
